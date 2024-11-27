@@ -18,20 +18,20 @@ function json_basic_auth_handler( $user ) {
 		return $user;
 	}
 
-    if ( !isset( $_SERVER['PHP_AUTH_USER'] ) && ( isset( $_SERVER['HTTP_AUTHORIZATION'] ) || isset( $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ) ) ) {
+    if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) && ( isset( $_SERVER['HTTP_AUTHORIZATION'] ) || isset( $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ) ) ) {
         if ( isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
-            $header = $_SERVER['HTTP_AUTHORIZATION'];
+            $authorization_header = $_SERVER['HTTP_AUTHORIZATION'];
         } else {
-            $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+            $authorization_header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
         }
 
-        if ( !empty( $header ) ) {
-            list( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] ) = explode( ':', base64_decode(substr( $header, 6 ) ) );
+	    if ( 'Basic ' === substr( $authorization_header, 0, 6 ) ) {
+            list( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] ) = explode( ':', base64_decode( substr( $authorization_header, 6 ) ), 2 );
         }
     }
-    
+
 	// Check that we're trying to authenticate
-	if ( !isset( $_SERVER['PHP_AUTH_USER'] ) ) {
+	if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
 		return $user;
 	}
 
